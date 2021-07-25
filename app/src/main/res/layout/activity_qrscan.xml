@@ -26,7 +26,33 @@
         android:id="@+id/zxscan"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:visibility="gone"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_permissionDenied"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/tvDeniedHint"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="Permission is denied for camera, please click the button to grant it."
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="@+id/layout_permissionDenied"
+            app:layout_constraintEnd_toEndOf="@+id/layout_permissionDenied"
+            app:layout_constraintTop_toTopOf="@+id/layout_permissionDenied"
+            app:layout_constraintBottom_toTopOf="@+id/btnSetting"/>
+        <Button
+            android:id="@+id/btnSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grant the Permission"
+            app:layout_constraintStart_toStartOf="@id/layout_permissionDenied"
+            app:layout_constraintEnd_toEndOf="@id/layout_permissionDenied"
+            app:layout_constraintTop_toBottomOf="@id/tvDeniedHint"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_permissionDenied"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:id="@+id/layout_result"
         android:layout_alignParentBottom="true"
@@ -143,12 +169,12 @@
             android:textColor="@color/black"
             android:layout_marginTop="10dp"/>
         <Button
-            android:id="@+id/btnNextStep"
+            android:id="@+id/btnReset"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="重置"
+            android:text="Reset"
             android:backgroundTint="@color/teal_700"
             android:padding="5dp"/>
 

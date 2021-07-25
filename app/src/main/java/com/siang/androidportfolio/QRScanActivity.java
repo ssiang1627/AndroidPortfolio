@@ -3,7 +3,9 @@ package com.siang.androidportfolio;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -25,13 +27,13 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class QRScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView scannerView;
+    private ConstraintLayout layoutPermissionDenied;
+    private Button btnSetting;
     private TextView tvResult1;
     private TextView tvResult2;
     private TextView tvResult3;
     private Handler pauseHandler = new Handler();
-    private Button btnNextStep;
-    private int permissionDeniedTimes = 0;
-    private static final int CAMERA_REQUEST_CODE = 100;
+    private Button btnReset;
     private PermissionHelper permissionHelper = new PermissionHelper(QRScanActivity.this);
 
 
@@ -51,9 +53,17 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
         tvResult1 = (TextView)findViewById(R.id.tvResult1);
         tvResult2 = (TextView)findViewById(R.id.tvResult2);
         tvResult3 = (TextView)findViewById(R.id.tvResult3);
-        btnNextStep = (Button)findViewById(R.id.btnNextStep);
+        btnReset = (Button)findViewById(R.id.btnReset);
+        layoutPermissionDenied = (ConstraintLayout)findViewById(R.id.layout_permissionDenied);
+        btnSetting = (Button)findViewById(R.id.btnSetting);
 
-        btnNextStep.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                permissionHelper.showSettingPage();
+            }
+        });
+        btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tvResult1.setText("");
@@ -71,12 +81,11 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
                 scannerView.resumeCameraPreview(QRScanActivity.this);
             }
         };
-
         tvResult1.setOnClickListener(tvOnClickListener);
         tvResult2.setOnClickListener(tvOnClickListener);
         tvResult3.setOnClickListener(tvOnClickListener);
 
-        requestPermission();
+        permissionHelper.requestPermission(Manifest.permission.CAMERA);
     }
 
     @Override
@@ -90,36 +99,6 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
         }
     }
 
-    public void requestPermission(){
-            permissionHelper.requestPermission();
-//        if (ContextCompat.checkSelfPermission(QRScanActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-//            ActivityCompat.requestPermissions(QRScanActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
-//        }else{
-//            scannerView.setResultHandler(QRScanActivity.this);
-//            scannerView.startCamera();
-//        }
-//        Dexter.withActivity(this)
-//                .withPermission(Manifest.permission.CAMERA)
-//                .withListener(new PermissionListener() {
-//                    @Override
-//                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-//                        scannerView.setResultHandler(QRScanActivity.this);
-//                        scannerView.startCamera();
-//                    }
-//
-//                    @Override
-//                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-//                        Toast.makeText(QRScanActivity.this,"You must accept this permission", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-//
-//                    }
-//                })
-//                .check();
-    }
-
     @Override
     protected void onDestroy() {
         scannerView.stopCamera();
@@ -128,8 +107,16 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
 
     @Override
     protected void onResume() {
-        scannerView.setResultHandler(this);
-        scannerView.startCamera();
+        if (permissionHelper.isPermissionGranted(Manifest.permission.CAMERA)){
+            scannerView.setResultHandler(this);
+            scannerView.startCamera();
+            scannerView.setVisibility(View.VISIBLE);
+            layoutPermissionDenied.setVisibility(View.GONE);
+        }else{
+            scannerView.setVisibility(View.GONE);
+            layoutPermissionDenied.setVisibility(View.VISIBLE);
+        }
+
         super.onResume();
     }
 
@@ -164,25 +151,14 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_REQUEST_CODE){
+        if (requestCode == PermissionHelper.CAMERA_REQUEST_CODE){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scannerView.setResultHandler(QRScanActivity.this);
                 scannerView.startCamera();
-            } else {
-                permissionDeniedTimes +=1;
-                if (permissionDeniedTimes <=1){
-                    Toast.makeText(QRScanActivity.this,"You must accept this permission", Toast.LENGTH_SHORT).show();
-                    requestPermission();
-                }else {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(intent);
-                }
-                Log.d("permissionDeniedTimes","times:" + permissionDeniedTimes);
-
+                scannerView.setVisibility(View.VISIBLE);
+                layoutPermissionDenied.setVisibility(View.GONE);
+            } else if (grantResults[0] ==PackageManager.PERMISSION_DENIED){
+                permissionHelper.showSettingAlertDialog("Camera");
             }
         }
     }
