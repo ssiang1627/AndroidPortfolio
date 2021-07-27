@@ -30,4 +30,12 @@
         app:layout_constraintTop_toBottomOf="@+id/btnQRScan"
         android:text="Scan Pic"/>
 
+    <Button
+        android:id="@+id/btnPicList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/green_ct"
+        app:layout_constraintTop_toBottomOf="@+id/btnScanPic"
+        android:text="Pic List"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

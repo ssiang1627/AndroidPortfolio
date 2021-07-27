@@ -4,6 +4,7 @@
     package="com.siang.androidportfolio">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,9 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidPortfolio">
-        <activity android:name="com.siang.androidportfolio.ScanPicActivity"></activity>
-        <activity android:name="com.siang.androidportfolio.QRScanActivity" />
-        <activity android:name="com.siang.androidportfolio.MainActivity">
+        <activity android:name=".PicListActivity"></activity>
+        <activity android:name=".ScanPicActivity" />
+        <activity android:name=".QRScanActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
