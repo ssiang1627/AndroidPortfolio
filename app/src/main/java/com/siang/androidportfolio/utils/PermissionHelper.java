@@ -1,4 +1,4 @@
-package com.siang.androidportfolio;
+package com.siang.androidportfolio.utils;
 
 import android.Manifest;
 import android.app.Activity;
