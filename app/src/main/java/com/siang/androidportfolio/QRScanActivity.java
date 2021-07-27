@@ -34,8 +34,6 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
     private TextView tvResult3;
     private Handler pauseHandler = new Handler();
     private Button btnReset;
-    private PermissionHelper permissionHelper = new PermissionHelper(QRScanActivity.this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +58,7 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                permissionHelper.showSettingPage();
+                PermissionHelper.showSettingPage(QRScanActivity.this);
             }
         });
         btnReset.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +83,7 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
         tvResult2.setOnClickListener(tvOnClickListener);
         tvResult3.setOnClickListener(tvOnClickListener);
 
-        permissionHelper.requestPermission(Manifest.permission.CAMERA);
+        PermissionHelper.requestPermission(QRScanActivity.this, Manifest.permission.CAMERA);
     }
 
     @Override
@@ -107,7 +105,7 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
 
     @Override
     protected void onResume() {
-        if (permissionHelper.isPermissionGranted(Manifest.permission.CAMERA)){
+        if (PermissionHelper.isPermissionGranted(QRScanActivity.this, Manifest.permission.CAMERA)){
             scannerView.setResultHandler(this);
             scannerView.startCamera();
             scannerView.setVisibility(View.VISIBLE);
@@ -158,7 +156,7 @@ public class QRScanActivity extends AppCompatActivity implements ZXingScannerVie
                 scannerView.setVisibility(View.VISIBLE);
                 layoutPermissionDenied.setVisibility(View.GONE);
             } else if (grantResults[0] ==PackageManager.PERMISSION_DENIED){
-                permissionHelper.showSettingAlertDialog("Camera");
+                PermissionHelper.showSettingAlertDialog(QRScanActivity.this,"Camera");
             }
         }
     }

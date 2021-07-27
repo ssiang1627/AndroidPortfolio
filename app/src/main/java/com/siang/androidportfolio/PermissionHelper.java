@@ -18,37 +18,34 @@ import androidx.core.content.ContextCompat;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PermissionHelper{
-    private Context context;
+public final class PermissionHelper{
     public static final int CAMERA_REQUEST_CODE = 100;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 101;
+
     private static final String TAG = "PermissionHelper";
     private int permissionDeniedTimes = 0;
 
-    public PermissionHelper(Context context)
-    {
-        this.context = context;
-    }
+    private PermissionHelper() { }
 
-    public void requestPermission(String permission) {
+    public static void requestPermission(Activity activity, String permission) {
         Log.d(TAG, "requestPermission: "+ permission);
-        Activity activity = (Activity) context;
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(activity, new String[]{permission}, getPermissionCode(permission));
         }
     }
 
-    public boolean isPermissionGranted(String permission){
+    public static boolean isPermissionGranted(Context context, String permission){
         return (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED ? true : false);
     }
 
-    public void showSettingAlertDialog(String permissionTitle){
+    public static void showSettingAlertDialog(Context context, String permissionTitle){
         new AlertDialog.Builder(context)
                 .setTitle("Permission Denied")
                 .setMessage("Please click \"Setting\" button to grant permission for "+ permissionTitle)
                 .setPositiveButton("Setting", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showSettingPage();
+                        showSettingPage(context);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -60,7 +57,7 @@ public class PermissionHelper{
                 .show();
     }
 
-    public void showSettingPage(){
+    public static void showSettingPage(Context context){
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", context.getPackageName(), null);
         intent.setData(uri);
@@ -69,10 +66,12 @@ public class PermissionHelper{
         context.startActivity(intent);
     }
 
-    public int getPermissionCode(String permission){
+    public static int getPermissionCode(String permission){
         switch (permission){
             case Manifest.permission.CAMERA:
                 return CAMERA_REQUEST_CODE;
+            case Manifest.permission.READ_EXTERNAL_STORAGE:
+                return READ_EXTERNAL_STORAGE_REQUEST_CODE;
         }
         return -1;
     }
