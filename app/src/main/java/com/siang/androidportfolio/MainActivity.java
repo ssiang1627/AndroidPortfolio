@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         String absolutePathOfImage = null;
         String displayName = null;
         Long fileSize = null;
-        MediaItem mediaItem = new MediaItem();
 
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.MediaColumns.DATA,
@@ -120,11 +119,10 @@ public class MainActivity extends AppCompatActivity {
             displayName = cursor.getString(column_index_display_name);
             fileSize = cursor.getLong(column_index_size);
 
+            MediaItem mediaItem = new MediaItem();
             mediaItem.setDisplayName(displayName);
             mediaItem.setPath(absolutePathOfImage);
             mediaItem.setSize(fileSize);
-
-            Log.d(TAG_MEDIA_LIST, "image: path:"+absolutePathOfImage + " / name:" + displayName + " / size:"+ fileSize/1024 +"kb");
 
             listOfAllImages.add(mediaItem);
         }
