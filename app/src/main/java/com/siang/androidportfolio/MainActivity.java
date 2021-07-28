@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnPicList;
     private TextView tvToolbarTitle;
     private Toolbar toolbar;
-    private static final String PIC_LIST_TAG = "PicList";
+    private static final String TAG_MEDIA_LIST = "MediaList";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,22 +81,29 @@ public class MainActivity extends AppCompatActivity {
         PermissionHelper.requestPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
 
         if (PermissionHelper.isPermissionGranted(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
-            Log.d(PIC_LIST_TAG, "all images: "+getAllShownImagesPath(MainActivity.this).size());
-            Intent picListIntent = new Intent(MainActivity.this, PicListActivity.class);
+            Log.d(TAG_MEDIA_LIST, "all images: "+getAllShownImagesPath(MainActivity.this).size());
+            ArrayList<MediaItem> mediaItems = getAllShownImagesPath(MainActivity.this);
+
+            Intent picListIntent = new Intent(MainActivity.this, MediaListActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("mediaItems",mediaItems);
+            picListIntent.putExtras(bundle);
             MainActivity.this.startActivity(picListIntent);
         }
     }
 
-    private ArrayList<String> getAllShownImagesPath(Activity activity) {
+    private ArrayList<MediaItem> getAllShownImagesPath(Activity activity) {
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_display_name, column_index_size;
-        ArrayList<String> listOfAllImages = new ArrayList<String>();
+
+        ArrayList<MediaItem> listOfAllImages = new ArrayList<MediaItem>();
         String absolutePathOfImage = null;
         String displayName = null;
         Long fileSize = null;
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        MediaItem mediaItem = new MediaItem();
 
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.MediaColumns.DATA,
                 MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE};
         String selection = MediaStore.Images.Media.DATA + " like ? ";
@@ -113,9 +120,13 @@ public class MainActivity extends AppCompatActivity {
             displayName = cursor.getString(column_index_display_name);
             fileSize = cursor.getLong(column_index_size);
 
-            Log.d(PIC_LIST_TAG, "image: path:"+absolutePathOfImage + " / name:" + displayName + " / size:"+ fileSize/1024 +"kb");
+            mediaItem.setDisplayName(displayName);
+            mediaItem.setPath(absolutePathOfImage);
+            mediaItem.setSize(fileSize);
 
-            listOfAllImages.add(absolutePathOfImage);
+            Log.d(TAG_MEDIA_LIST, "image: path:"+absolutePathOfImage + " / name:" + displayName + " / size:"+ fileSize/1024 +"kb");
+
+            listOfAllImages.add(mediaItem);
         }
         return listOfAllImages;
     }
