@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -69,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void startQRScanActivity(){
         Intent qrIntent = new Intent(MainActivity.this, QRScanActivity.class );
-        MainActivity.this.startActivity(qrIntent);
+        startActivity(qrIntent);
     }
 
     public void startScanPicActivity(){
         Intent scanPicIntent = new Intent(MainActivity.this, ScanPicActivity.class);
-        MainActivity.this.startActivity(scanPicIntent);
+        startActivity(scanPicIntent);
     }
 
     public void startPicListActivity(){
@@ -88,11 +89,11 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putSerializable("mediaItems",mediaItems);
             picListIntent.putExtras(bundle);
-            MainActivity.this.startActivity(picListIntent);
+            startActivity(picListIntent);
         }
     }
 
-    private ArrayList<MediaItem> getAllShownImagesPath(Activity activity) {
+    private ArrayList<MediaItem> getAllShownImagesPath(Context context) {
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_display_name, column_index_size;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE};
         String selection = MediaStore.Images.Media.DATA + " like ? ";
         String[] selectionArgs = new String[]{"%DCIM/LINE%"};
-        cursor = activity.getContentResolver().query(uri, projection, selection,
+        cursor = context.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);

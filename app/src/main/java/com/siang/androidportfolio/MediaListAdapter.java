@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class MediaListAdapter extends BaseAdapter {
@@ -44,7 +46,12 @@ public class MediaListAdapter extends BaseAdapter {
         //set content for view
         tvDisplayName.setText(mediaItems.get(position).getDisplayName());
         tvPath.setText(mediaItems.get(position).getPath());
-
+//        Glide.with(view.getContext())
+//                .asBitmap()
+//                .load(mediaItems.get(position).getPath())
+//                .thumbnail(0.1f)
+//                .into(ivThumbnail);
+        ivThumbnail.setImageBitmap(mediaItems.get(position).getBitmap());
         return view;
     }
 }

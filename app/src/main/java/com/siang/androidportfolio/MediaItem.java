@@ -1,5 +1,11 @@
 package com.siang.androidportfolio;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 public class MediaItem implements Serializable {
@@ -32,5 +38,21 @@ public class MediaItem implements Serializable {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public Bitmap getBitmap(){
+
+        Bitmap bitmap = null;
+        if (path != null){
+            try {
+                File file = new File(path);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                bitmap = BitmapFactory.decodeStream(new FileInputStream(file), null, options);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
     }
 }
