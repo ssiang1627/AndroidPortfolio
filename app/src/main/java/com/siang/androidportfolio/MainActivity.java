@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<MediaItem> listOfAllImages = new ArrayList<MediaItem>();
         String absolutePathOfImage = null;
-        String displayName = null;
+        String title = null;
         Long fileSize = null;
 
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -117,11 +117,10 @@ public class MainActivity extends AppCompatActivity {
 
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
-            displayName = cursor.getString(column_index_display_name);
+            title = cursor.getString(column_index_display_name);
             fileSize = cursor.getLong(column_index_size);
 
-            MediaItem mediaItem = new MediaItem();
-            mediaItem.setDisplayName(displayName);
+            MediaItem mediaItem = new MediaItem(title, absolutePathOfImage);
             mediaItem.setPath(absolutePathOfImage);
             mediaItem.setSize(fileSize);
 
