@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
             MediaItem mediaItem = new MediaItem(title, absolutePathOfImage);
             mediaItem.setPath(absolutePathOfImage);
             mediaItem.setSize(fileSize);
+            //Use img from internet
+            mediaItem.setImgUrl("https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png");
 
             listOfAllImages.add(mediaItem);
         }

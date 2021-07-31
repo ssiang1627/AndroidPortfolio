@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MediaItem implements Serializable {
     private String path;
@@ -55,6 +60,10 @@ public class MediaItem implements Serializable {
         return imgUrl;
     }
 
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
@@ -75,11 +84,29 @@ public class MediaItem implements Serializable {
         this.imgUrl = imgUrl;
     }
 
-    public Bitmap getBitmap(){
+    public void prepareBitmap(){
         if (bitmap != null){
-            return bitmap;
+            return;
         }
 
+        //prepare Bitmap for url
+        if (imgUrl != null){
+            try {
+                URL url = new URL(imgUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                bitmap = BitmapFactory.decodeStream(input);
+                Log.d("MediaItem", "bitmap url");
+                return;
+            } catch (IOException e) {
+                // Log exception
+                e.printStackTrace();
+            }
+        }
+
+        //prepare Bitmap for local file
         if (path != null){
             try {
                 File file = new File(path);
@@ -90,23 +117,5 @@ public class MediaItem implements Serializable {
                 e.printStackTrace();
             }
         }
-        return bitmap;
-    }
-
-    public void prepareBitmapForUrl(Context context, String url){
-        Glide.with(context)
-                .asBitmap()
-                .load(url)
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                        bitmap = resource;
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable @org.jetbrains.annotations.Nullable Drawable placeholder) {
-
-                    }
-                });
     }
 }
