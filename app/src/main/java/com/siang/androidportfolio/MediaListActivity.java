@@ -51,7 +51,7 @@ public class MediaListActivity extends AppCompatActivity {
                 Toast.makeText(MediaListActivity.this, "file size: "+ mediaItems.get(position).getSize(), Toast.LENGTH_SHORT).show();
             }
         });
-//        updateImageAsync(shownMediaItems);
+        updateImageAsync(shownMediaItems);
         lvMedia.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -61,15 +61,17 @@ public class MediaListActivity extends AppCompatActivity {
                             "/lastVisible: "+lvMedia.getLastVisiblePosition()+
                             "/adapter: "+adapter.getCount()
                     );
-
-                    if ( lastNumber < mediaItems.size() && lastNumber+10 > mediaItems.size()){
-                        shownMediaItems.addAll(mediaItems.subList(lastNumber, mediaItems.size()));
-                    }else if (lastNumber < mediaItems.size()){
-                        shownMediaItems.addAll(mediaItems.subList(lastNumber, lastNumber+10));
+                    synchronized (shownMediaItems){
+                        if ( lastNumber < mediaItems.size() && lastNumber+10 > mediaItems.size()){
+                            shownMediaItems.addAll(mediaItems.subList(lastNumber, mediaItems.size()));
+                        }else if (lastNumber < mediaItems.size()){
+                            shownMediaItems.addAll(mediaItems.subList(lastNumber, lastNumber+10));
+                        }
                     }
                     lastNumber = lastNumber+10;
                     Log.d(TAG, "shownMediaItems:" +shownMediaItems.size());
                     adapter.notifyDataSetChanged();
+                    updateImageAsync(shownMediaItems);
                 }
             }
 
@@ -78,8 +80,6 @@ public class MediaListActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     //prepare the bitmap asynchronously and update the list view in main UI Thread
@@ -89,15 +89,17 @@ public class MediaListActivity extends AppCompatActivity {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                for (MediaItem mediaItem: mediaItemList){
-                    mediaItem.prepareBitmap();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.notifyDataSetChanged();
-                            lvMedia.invalidateViews();
-                        }
-                    });
+                synchronized (mediaItemList){
+                    for (MediaItem mediaItem: mediaItemList){
+                        mediaItem.prepareBitmap();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                                lvMedia.invalidateViews();
+                            }
+                        });
+                    }
                 }
             }
         });
