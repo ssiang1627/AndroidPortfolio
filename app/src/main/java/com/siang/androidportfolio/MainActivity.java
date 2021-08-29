@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG_MEDIA_LIST, "all images: "+getAllShownImagesPath(MainActivity.this).size());
             ArrayList<MediaItem> mediaItems = getAllShownImagesPath(MainActivity.this);
 
-            Intent picListIntent = new Intent(MainActivity.this, MediaListActivity.class);
+            Intent picListIntent = new Intent(MainActivity.this, MediaRecyclerActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("mediaItems",mediaItems);
             picListIntent.putExtras(bundle);
