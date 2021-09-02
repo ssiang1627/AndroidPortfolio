@@ -1,6 +1,10 @@
 package com.siang.androidportfolio;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +16,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdapter.MediaViewHolder> {
     private ArrayList<MediaItem> mediaItems;
     private Context context;
+    ExecutorService executorService;
+
 
     public MediaRecyclerAdapter(Context context, ArrayList<MediaItem> mediaItems) {
         this.mediaItems = mediaItems;
         this.context = context;
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     @NonNull
@@ -36,9 +47,16 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdap
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull MediaViewHolder holder, int position) {
-        holder.tvTitle.setText(mediaItems.get(position).getTitle());
-        holder.tvDescription.setText(mediaItems.get(position).getDescription());
-        holder.ivThumbnail.setImageBitmap(mediaItems.get(position).getBitmap());
+        MediaItem mediaItem = mediaItems.get(position);
+        holder.tvTitle.setText(mediaItem.getTitle());
+        holder.tvDescription.setText(mediaItem.getDescription());
+        Bitmap bitmap = mediaItem.getBitmap();
+        if (bitmap == null){
+            updateImageAsync(mediaItem, holder.ivThumbnail, position);
+        }else{
+            holder.ivThumbnail.setImageBitmap(bitmap);
+        }
+//        Glide.with(holder.ivThumbnail).load(mediaItem.getPath()).into(holder.ivThumbnail);
         holder.layoutMediaItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,5 +83,22 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<MediaRecyclerAdap
             layoutMediaItem = itemView.findViewById(R.id.layout_media_item);
             ivThumbnail = itemView.findViewById(R.id.ivThumbnail);
         }
+    }
+
+    public void updateImageAsync(MediaItem mediaItem, ImageView imageView, int position){
+        Handler handler = new Handler(Looper.getMainLooper()); //Use the main UI Thread
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                mediaItem.prepareBitmap();
+                Log.d("updateImageAsync", "position: "+ position + "/ thread: " +Thread.currentThread().getName());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(mediaItem.getBitmap());
+                    }
+                });
+            }
+        });
     }
 }

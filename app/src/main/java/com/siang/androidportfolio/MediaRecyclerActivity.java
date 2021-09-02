@@ -40,7 +40,7 @@ public class MediaRecyclerActivity extends AppCompatActivity {
         adapter = new MediaRecyclerAdapter(this, shownMediaItems);
         rvMedia.setAdapter(adapter);
         rvMedia.setLayoutManager(new LinearLayoutManager(this));
-        updateImageAsync(shownMediaItems);
+//        updateImageAsync(shownMediaItems);
 
         rvMedia.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -48,17 +48,17 @@ public class MediaRecyclerActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (!rvMedia.canScrollVertically(1)) {
-                    synchronized (shownMediaItems){
+//                    synchronized (shownMediaItems){
                         if ( lastNumber < mediaItems.size() && lastNumber+10 > mediaItems.size()){
                             shownMediaItems.addAll(mediaItems.subList(lastNumber, mediaItems.size()));
                         }else if (lastNumber < mediaItems.size()){
                             shownMediaItems.addAll(mediaItems.subList(lastNumber, lastNumber+10));
                         }
-                    }
+//                    }
                     lastNumber = lastNumber+10;
                     Log.d(TAG, "shownMediaItems:" +shownMediaItems.size());
                     adapter.notifyDataSetChanged();
-                    updateImageAsync(shownMediaItems);
+//                    updateImageAsync(shownMediaItems);
                 }
             }
         });
