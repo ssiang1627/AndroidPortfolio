@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.siang.androidportfolio.utils.PermissionHelper;
+import com.siang.androidportfolio.view.NewsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnQRScan;
     private Button btnScanPic;
     private Button btnPicList;
+    private Button btnNewsList;
     private TextView tvToolbarTitle;
     private Toolbar toolbar;
     private static final String TAG_MEDIA_LIST = "MediaList";
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         btnQRScan = findViewById(R.id.btnQRScan);
         btnScanPic = findViewById(R.id.btnScanPic);
         btnPicList = findViewById(R.id.btnPicList);
+        btnNewsList = findViewById(R.id.btnNewsList);
         tvToolbarTitle = findViewById(R.id.tvToolbarTitle);
         toolbar = findViewById(R.id.toolbar);
 
@@ -66,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
                 startPicListActivity();
             }
         });
+
+        btnNewsList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNewsActivity();
+            }
+        });
+    }
+
+    private void startNewsActivity() {
+        Intent newsIntent = new Intent(MainActivity.this, NewsActivity.class);
+        startActivity(newsIntent);
     }
 
     public void startQRScanActivity(){

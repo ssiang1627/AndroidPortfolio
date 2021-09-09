@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidPortfolio">
-        <activity android:name=".MediaRecyclerActivity"></activity>
+        <activity android:name=".view.NewsActivity"></activity>
+        <activity android:name=".MediaRecyclerActivity" />
         <activity android:name=".MediaListActivity" />
         <activity android:name=".ScanPicActivity" />
         <activity android:name=".QRScanActivity" />
