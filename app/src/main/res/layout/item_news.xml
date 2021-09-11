@@ -18,6 +18,6 @@
         android:textColor="@color/white"
         android:gravity="center"
         android:textStyle="bold"
-        android:paddingBottom="16dp"
+        android:paddingVertical="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivCover"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

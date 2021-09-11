@@ -1,6 +1,7 @@
 package com.siang.androidportfolio.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +63,6 @@ public class NewsActivity extends AppCompatActivity {
         adapter = new ArticleAdapter(NewsActivity.this, articleArrayList);
         recyclerView.setAdapter(adapter);
 
-        articleViewModel = ViewModelProviders.of(this).get(ArticleViewModel.class);
+        articleViewModel = new ViewModelProvider(this).get(ArticleViewModel.class);
     }
 }
