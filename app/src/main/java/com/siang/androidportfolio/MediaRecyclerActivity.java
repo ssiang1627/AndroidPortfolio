@@ -40,7 +40,6 @@ public class MediaRecyclerActivity extends AppCompatActivity {
         adapter = new MediaRecyclerAdapter(this, shownMediaItems);
         rvMedia.setAdapter(adapter);
         rvMedia.setLayoutManager(new LinearLayoutManager(this));
-//        updateImageAsync(shownMediaItems);
 
         rvMedia.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -48,38 +47,14 @@ public class MediaRecyclerActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 if (!rvMedia.canScrollVertically(1)) {
-//                    synchronized (shownMediaItems){
-                        if ( lastNumber < mediaItems.size() && lastNumber+10 > mediaItems.size()){
-                            shownMediaItems.addAll(mediaItems.subList(lastNumber, mediaItems.size()));
-                        }else if (lastNumber < mediaItems.size()){
-                            shownMediaItems.addAll(mediaItems.subList(lastNumber, lastNumber+10));
-                        }
-//                    }
+                    if ( lastNumber < mediaItems.size() && lastNumber+10 > mediaItems.size()){
+                        shownMediaItems.addAll(mediaItems.subList(lastNumber, mediaItems.size()));
+                    }else if (lastNumber < mediaItems.size()){
+                        shownMediaItems.addAll(mediaItems.subList(lastNumber, lastNumber+10));
+                    }
                     lastNumber = lastNumber+10;
                     Log.d(TAG, "shownMediaItems:" +shownMediaItems.size());
                     adapter.notifyDataSetChanged();
-//                    updateImageAsync(shownMediaItems);
-                }
-            }
-        });
-    }
-
-    public void updateImageAsync(List<MediaItem> mediaItemList){
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper()); //Use the main UI Thread
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mediaItemList){
-                    for (MediaItem mediaItem: mediaItemList){
-                        mediaItem.prepareBitmap();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
                 }
             }
         });
