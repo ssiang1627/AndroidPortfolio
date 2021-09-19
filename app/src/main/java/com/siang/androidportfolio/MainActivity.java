@@ -6,18 +6,25 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.siang.androidportfolio.utils.PermissionHelper;
 import com.siang.androidportfolio.view.NewsActivity;
 
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvToolbarTitle;
     private Toolbar toolbar;
     private static final String TAG_MEDIA_LIST = "MediaList";
+    private static final String TAG_FCM_TOKEN = "FCMToken";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 startNewsActivity();
             }
         });
+
+        getFCMToken();
+        initNotificationChannel();
     }
 
     private void startNewsActivity() {
@@ -154,5 +165,37 @@ public class MainActivity extends AppCompatActivity {
                 startPicListActivity();
             }
         }
+    }
+
+    private void initNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.notification_channel_id_default);
+            String channelName = getString(R.string.notification_channel_name_default);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+    }
+
+    private void getFCMToken(){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<String> task) {
+                if (!task.isSuccessful()){
+                    Log.w(TAG_FCM_TOKEN, "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+
+                // Get new FCM registration token
+                String token = task.getResult();
+
+                // Log and toast
+                String msg = getString(R.string.msg_token_fmt, token);
+                Log.i(TAG_FCM_TOKEN, msg);
+                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

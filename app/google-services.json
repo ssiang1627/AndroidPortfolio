@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "380671479959",
+    "project_id": "androidportfolio-c910c",
+    "storage_bucket": "androidportfolio-c910c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380671479959:android:8f4a1bf8d9eba32dc2d9d2",
+        "android_client_info": {
+          "package_name": "com.siang.androidportfolio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380671479959-norcod9u73rn5vrs5nih7peampdos2f3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHTc6_9IMkDt7VuMqDOHmGxJVMQTyZy5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380671479959-norcod9u73rn5vrs5nih7peampdos2f3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
