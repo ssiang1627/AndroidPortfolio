@@ -14,12 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidPortfolio">
+        <activity
+            android:name=".DialogActivity"
+            android:theme="@style/Theme.AppCompat.Translucent"></activity>
+
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".APFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

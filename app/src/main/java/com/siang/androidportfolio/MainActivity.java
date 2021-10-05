@@ -10,6 +10,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -89,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
         initNotificationChannel();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences pref = getSharedPreferences("campaign", MODE_PRIVATE);
+        boolean displayDialog = pref.getBoolean("DISPLAY", true);
+        if (!displayDialog){
+            startDialogActivity();
+        }
+    }
+
     private void startNewsActivity() {
         Intent newsIntent = new Intent(MainActivity.this, NewsActivity.class);
         startActivity(newsIntent);
@@ -102,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
     public void startScanPicActivity(){
         Intent scanPicIntent = new Intent(MainActivity.this, ScanPicActivity.class);
         startActivity(scanPicIntent);
+    }
+
+    public void startDialogActivity(){
+        Intent intent = new Intent(MainActivity.this, DialogActivity.class);
+        startActivity(intent);
     }
 
     public void startPicListActivity(){
@@ -170,12 +186,17 @@ public class MainActivity extends AppCompatActivity {
     private void initNotificationChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
-            String channelId  = getString(R.string.notification_channel_id_default);
-            String channelName = getString(R.string.notification_channel_name_default);
+            String defaultChannelId  = getString(R.string.notification_channel_id_default);
+            String defaultChannelName = getString(R.string.notification_channel_name_default);
+            String importantChannelId  = getString(R.string.notification_channel_id_important);
+            String importantChannelName = getString(R.string.notification_channel_name_important);
+
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
-                    channelName, NotificationManager.IMPORTANCE_HIGH));
+            notificationManager.createNotificationChannel(new NotificationChannel(defaultChannelId,
+                    defaultChannelName, NotificationManager.IMPORTANCE_DEFAULT));
+            notificationManager.createNotificationChannel(new NotificationChannel(importantChannelId,
+                    importantChannelName, NotificationManager.IMPORTANCE_HIGH));
         }
     }
 

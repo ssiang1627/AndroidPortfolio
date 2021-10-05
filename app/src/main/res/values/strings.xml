@@ -3,6 +3,8 @@
     <string name="msg_token_fmt">FCM registration Token: %s</string>
     <string name="notification_channel_id_default">default_notification_channel_id</string>
     <string name="notification_channel_name_default">預設</string>
+    <string name="notification_channel_id_important">important_notification_channel_id</string>
+    <string name="notification_channel_name_important">重要</string>
     <string name="notification_action_home">Home</string>
     <string name="notification_action_news">新聞</string>
 </resources>
