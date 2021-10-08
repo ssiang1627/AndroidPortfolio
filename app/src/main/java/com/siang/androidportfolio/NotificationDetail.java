@@ -10,6 +10,7 @@ public class NotificationDetail {
     private String channelId;
     private String style;
     private String largeIconName;
+    private long campaignNewsId;
     private List<String> actionList;
 
     public void setTitle(String title) {
@@ -38,6 +39,10 @@ public class NotificationDetail {
 
     public void setLargeIconName(String largeIconName) {
         this.largeIconName = largeIconName;
+    }
+
+    public void setCampaignNewsId(long campaignNewsId) {
+        this.campaignNewsId = campaignNewsId;
     }
 
     public void setActionList(List<String> actionList) {
@@ -70,6 +75,10 @@ public class NotificationDetail {
 
     public String getLargeIconName() {
         return largeIconName;
+    }
+
+    public long getCampaignNewsId() {
+        return campaignNewsId;
     }
 
     public List<String> getActionList() {

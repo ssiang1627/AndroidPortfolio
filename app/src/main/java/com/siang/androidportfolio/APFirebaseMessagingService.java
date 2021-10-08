@@ -77,6 +77,7 @@ public class APFirebaseMessagingService extends FirebaseMessagingService impleme
             notificationDetail.setChannelId(data.get("android_channel_id"));
             notificationDetail.setLargeIconName(data.get("large_icon"));
             notificationDetail.setStyle(data.get("notification_style"));
+            notificationDetail.setCampaignNewsId(Long.parseLong(data.get("campaign_news_id")));
             notificationDetail.setActionList(Arrays.asList(data.get("action_buttons").split("\\s*,\\s*")));
 
             switch (notificationDetail.getClickAction()){
@@ -86,13 +87,14 @@ public class APFirebaseMessagingService extends FirebaseMessagingService impleme
                 case "OPEN_DIALOG":
                     if (isAppInForeground){
                         Intent dialogIntent = new Intent(this, DialogActivity.class);
+                        dialogIntent.putExtra("CAMPAIGN_NEWS_ID", notificationDetail.getCampaignNewsId());
                         dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(dialogIntent);
                     }else{
                         SharedPreferences pref = getSharedPreferences("campaign", MODE_PRIVATE);
                         pref.edit()
                                 .putBoolean("DISPLAY", false)
-                                .putString("API", "")
+                                .putLong("CAMPAIGN_NEWS_ID", notificationDetail.getCampaignNewsId())
                                 .apply();
                         sendNotification(notificationDetail, DialogActivity.class);
                     }
@@ -108,6 +110,9 @@ public class APFirebaseMessagingService extends FirebaseMessagingService impleme
 
     private void sendNotification(NotificationDetail notificationDetail, Class targetClass) {
         Intent targetIntent = new Intent(this, targetClass);
+        if (targetClass == DialogActivity.class){
+            targetIntent.putExtra("CAMPAIGN_NEWS_ID", notificationDetail.getCampaignNewsId());
+        }
         targetIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent targetPIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
