@@ -17,6 +17,14 @@ public class SFNews {
     @Expose
     private String newsSite;
 
+    @SerializedName("id")
+    @Expose
+    private long id;
+
+    @SerializedName("summary")
+    @Expose
+    private String summary;
+
     public String getTitle() {
         return title;
     }
@@ -27,6 +35,14 @@ public class SFNews {
 
     public String getNewsSite() {
         return newsSite;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 
     public void setTitle(String title) {
@@ -41,14 +57,22 @@ public class SFNews {
         this.newsSite = newsSite;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     @Override
     public String toString() {
         return "SFNews{" +
                 "title='" + title + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", newsSite='" + newsSite + '\'' +
+                ", id=" + id +
+                ", summary='" + summary + '\'' +
                 '}';
     }
-
-
 }

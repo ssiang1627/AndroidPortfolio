@@ -2,18 +2,21 @@ package com.siang.androidportfolio.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.siang.androidportfolio.R;
 import com.siang.androidportfolio.adapter.ArticleAdapter;
+import com.siang.androidportfolio.adapter.SFNewsAdapter;
 import com.siang.androidportfolio.model.Article;
+import com.siang.androidportfolio.model.SFNews;
 import com.siang.androidportfolio.view_model.ArticleViewModel;
+import com.siang.androidportfolio.view_model.SFNewsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,11 @@ public class NewsActivity extends AppCompatActivity {
 
     private LinearLayoutManager layoutManager;
     private ArrayList<Article> articleArrayList = new ArrayList<>();
+    private ArrayList<SFNews> sfNewsArrayList = new ArrayList<>();
     ArticleViewModel articleViewModel;
-    private ArticleAdapter adapter;
+    SFNewsViewModel sfNewsViewModel;
+    private ArticleAdapter articleAdapter;
+    private SFNewsAdapter sfNewsAdapter;
 
 
     @Override
@@ -38,6 +44,8 @@ public class NewsActivity extends AppCompatActivity {
         init();
 
         getArticles();
+        getSFNewsList();
+        sfNewsViewModel.getSFNewsArticleList(10);
     }
 
     private void getArticles() {
@@ -46,11 +54,20 @@ public class NewsActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 List<Article> articleList = articleResponse.getArticles();
                 articleArrayList.addAll(articleList);
-                adapter.notifyDataSetChanged();
+                articleAdapter.notifyDataSetChanged();
             }
         });
+    }
 
-
+    private void getSFNewsList() {
+        Log.i("FCMToken", "getSFNewsList");
+        sfNewsViewModel.getSFNewsListLiveData().observe(this, sfNewsList -> {
+            if (sfNewsList != null && !sfNewsList.isEmpty()) {
+                progressBar.setVisibility(View.GONE);
+                sfNewsArrayList.addAll(sfNewsList);
+                sfNewsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void init() {
@@ -60,9 +77,11 @@ public class NewsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        adapter = new ArticleAdapter(NewsActivity.this, articleArrayList);
-        recyclerView.setAdapter(adapter);
+        articleAdapter = new ArticleAdapter(NewsActivity.this, articleArrayList);
+        sfNewsAdapter = new SFNewsAdapter(NewsActivity.this, sfNewsArrayList);
+        recyclerView.setAdapter(sfNewsAdapter);
 
         articleViewModel = new ViewModelProvider(this).get(ArticleViewModel.class);
+        sfNewsViewModel = new ViewModelProvider(this).get(SFNewsViewModel.class);
     }
 }

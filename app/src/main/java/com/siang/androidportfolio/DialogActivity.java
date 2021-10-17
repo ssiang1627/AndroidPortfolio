@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.siang.androidportfolio.model.SFNews;
-import com.siang.androidportfolio.view_model.ArticleViewModel;
 import com.siang.androidportfolio.view_model.SFNewsViewModel;
 
 public class DialogActivity extends AppCompatActivity {
@@ -25,33 +24,30 @@ public class DialogActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         long campaignNewsId = intent.getLongExtra("CAMPAIGN_NEWS_ID",0);
-        if (campaignNewsId == 0){
-            boolean display = pref.getBoolean("DISPLAY",true);
-            if (!display){
-                campaignNewsId = pref.getLong("CAMPAIGN_NEWS_ID", 1);
-            }
-        }
 
         viewModel = new ViewModelProvider(this).get(SFNewsViewModel.class);
-        viewModel.getSfNewsLiveData().observe(this, new Observer<SFNews>() {
+        viewModel.getSFNewsLiveData().observe(this, new Observer<SFNews>() {
             @Override
             public void onChanged(SFNews sfNews) {
                 Log.i("FCMToken", sfNews.toString());
                 if (sfNews != null){
-                    showDialog(sfNews.getTitle(), sfNews.getNewsSite());
+                    showDialog(sfNews.getTitle(), sfNews.getSummary());
                     pref.edit()
                             .putBoolean("DISPLAY", true)
                             .apply();
                 }
             }
         });
-        viewModel.getSFNewsArticle(campaignNewsId);
+
+        if (campaignNewsId != 0){
+            viewModel.getSFNewsArticle(campaignNewsId);
+        }
     }
 
     private void showDialog(String title, String message){
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(title);
-        alertDialog.setMessage("News Site: " + message);
+        alertDialog.setMessage(message);
         alertDialog.setIcon(R.drawable.newspaper);
         alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override

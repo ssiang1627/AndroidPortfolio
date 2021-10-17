@@ -95,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences pref = getSharedPreferences("campaign", MODE_PRIVATE);
         boolean displayDialog = pref.getBoolean("DISPLAY", true);
+        long campaignNewsId = pref.getLong("CAMPAIGN_NEWS_ID", 0);
         if (!displayDialog){
-            startDialogActivity();
+            startDialogActivity(campaignNewsId);
         }
     }
 
@@ -115,8 +116,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(scanPicIntent);
     }
 
-    public void startDialogActivity(){
+    public void startDialogActivity(long campaignNewsId){
         Intent intent = new Intent(MainActivity.this, DialogActivity.class);
+        intent.putExtra("CAMPAIGN_NEWS_ID", campaignNewsId);
         startActivity(intent);
     }
 
